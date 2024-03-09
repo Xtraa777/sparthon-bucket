@@ -1,123 +1,153 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>2024 신년계획 버킷리스트</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <style>
+      .bg {
+        background-image: url("./벚꽃배경.gif");
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin: 0 auto;
+        background-color: #141617;
+      }
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>2024 신년계획 버킷리스트</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
-  <style>
-    .bg {
-      background-image: url("./Sparthon_BG.png");
-      background-size: cover;
-      background-repeat: no-repeat;
-      margin: 0 auto;
-      background-color: #141617;
-    }
+      .title {
+        margin-top: 50px;
+        color: #e8344e;
+      }
 
-    .title {
-      margin-top: 50px;
-      color: #E8344E;
-    }
+      .msg {
+        color: white;
+        margin-bottom: 48px;
+      }
 
-    .msg {
-      color: white;
-      margin-bottom: 48px;
-    }
+      .bucket {
+        width: 160px;
+        height: 160px;
+        background-size: cover;
+        background-position: center;
+      }
 
-    .bucket {
-      width: 160px;
-      height: 160px;
-      background-size: cover;
-      background-position: center;
-    }
+      .img1 {
+        background-image: url("./Bucket01.png");
+        color: white;
+      }
 
-    .img1 {
-      background-image: url("./Bucket01.png");
-      color: white;
-    }
+      .img2 {
+        background-image: url("./Bucket02.png");
+        color: #e8344e;
+      }
 
-    .img2 {
-      background-image: url("./Bucket02.png");
-      color: #E8344E;
-    }
+      .img3 {
+        background-image: url("./Bucket03.png");
+        color: #e8344e;
+      }
 
-    .img3 {
-      background-image: url("./Bucket03.png");
-      color: #E8344E;
-    }
+      .img4 {
+        background-image: url("./Bucket04.png");
+        color: white;
+      }
 
-    .img4 {
-      background-image: url("./Bucket04.png");
-      color: white;
-    }
+      .img5 {
+        background-image: url("./Bucket05.png");
+        color: white;
+      }
 
-    .img5 {
-      background-image: url("./Bucket05.png");
-      color: white;
-    }
+      .img6 {
+        background-image: url("./Bucket06.png");
+        color: #e8344e;
+      }
 
-    .img6 {
-      background-image: url("./Bucket06.png");
-      color: #E8344E;
-    }
-  </style>
-</head>
+      .audio-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+      }
+    </style>
+  </head>
 
-<body class="bg center">
-  <h1 class="title">SPARTHON Bucket List</h1>
-  <p class="msg">꿈은 꾸는 것이 아닌, 이루는 것이다.</p>
-  <div class="flex-row wrap">
-    <div class="bucket img1 center">
-      나만의 웹 만들기
+  <body class="bg center">
+    <div class="audio-container">
+      <audio autoplay loop controls>
+        <source src="./bgm.mp3" type="audio/mpeg" />
+      </audio>
     </div>
-    <div class="bucket img2 center">
-      바디프로필 찍기
-    </div>
-    <div class="bucket img3 center">
-      인테리어 꾸미기
-    </div>
-    <div class="bucket img4 center">
-      식물 키우기
-    </div>
-    <div class="bucket img5 center">
-      10킬로그램 감량!
-    </div>
-    <div class="bucket img6 center">
-      내가 만든 웹사이트 자랑하기
-    </div>
-  </div>
-  <script>
-    // 페이지 로드 시 이전 상태 복원
-    document.addEventListener("DOMContentLoaded", (event) => {
-      const buckets = document.querySelectorAll(".bucket");
-      buckets.forEach((bucket, index) => {
-        // 로컬 스토리지에서 상태 읽기
-        const isDone = localStorage.getItem("bucket" + index) === "done";
-        if (isDone) {
-          bucket.classList.add("done");
+    <h1 class="title">SPARTHON Bucket List</h1>
+    <p class="msg">꿈은 꾸는 것이 아닌, 이루는 것이다.</p>
+    <button id="addButton" type="button" onclick="addBucket()">
+      <img src="./Bucket_Plus.png" />
+    </button>
+    <div class="flex-row wrap" id="bucketList">
+      <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+          const bucketList = document.getElementById("bucketList");
+          const buckets = JSON.parse(localStorage.getItem("buckets")) || [];
+          buckets.forEach((bucket, index) => {
+            addBucketElement(bucket, index);
+          });
+        });
+
+        function addBucket() {
+          const bucketList = document.getElementById("bucketList");
+          const bucketCount = bucketList.children.length;
+          const newBucketText = prompt("새로운 버킷을 입력하세요:");
+          if (newBucketText) {
+            const newBucket = {
+              text: newBucketText,
+              done: false,
+            };
+            addBucketElement(newBucket, bucketCount);
+            saveBuckets();
+          }
         }
-      });
-    });
 
-    // 버킷 리스트 클릭 이벤트
-    const buckets = document.querySelectorAll(".bucket");
-    buckets.forEach((bucket, index) => {
-      bucket.addEventListener("click", function () {
-        // 클래스 토글
-        bucket.classList.toggle("done");
+        function addBucketElement(bucket, index) {
+          const bucketDiv = document.createElement("div");
+          bucketDiv.className = "bucket img" + ((index % 6) + 1) + " center";
+          bucketDiv.textContent = bucket.text;
+          if (bucket.done) {
+            bucketDiv.classList.add("done");
+          }
+          bucketDiv.addEventListener("click", function () {
+            bucketDiv.classList.toggle("done");
+            buckets[index].done = !buckets[index].done;
+            saveBuckets();
+          });
 
-        // 로컬 스토리지에 상태 저장
-        if (bucket.classList.contains("done")) {
-          localStorage.setItem("bucket" + index, "done");
-        } else {
-          localStorage.setItem("bucket" + index, "");
+          const deleteButton = document.createElement("button");
+          const deleteImg = document.createElement("img");
+          deleteImg.src = "./Delete.png";
+          deleteImg.style.width = "20px";
+          deleteImg.style.height = "20px";
+          deleteButton.appendChild(deleteImg);
+          deleteButton.style.position = "absolute";
+          deleteButton.style.top = "0";
+          deleteButton.style.right = "0";
+          deleteButton.onclick = function (event) {
+            event.stopPropagation();
+            bucketList.removeChild(bucketDiv);
+            buckets.splice(index, 1);
+            saveBuckets();
+          };
+          bucketDiv.appendChild(deleteButton);
+
+          bucketList.appendChild(bucketDiv);
         }
-      });
-    });
-  </script>
 
-</body>
+        function saveBuckets() {
+          localStorage.setItem("buckets", JSON.stringify(buckets));
+        }
 
+        let buckets = [];
+
+        document.addEventListener("DOMContentLoaded", (event) => {
+          buckets = JSON.parse(localStorage.getItem("buckets")) || [];
+        });
+      </script>
+    </div>
+  </body>
 </html>
